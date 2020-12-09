@@ -12,7 +12,11 @@ if(length(args)==0){
 
 #Illustration
 source("Simulation_Function.R")
+library(mgcv)
+library(gee)
+
 # Simulated dataset
+for (i in 1:1000){
 Simu_Wrap=Simulation_Data(nsample_m_mean=sparsity.level,
                           nsample_y_mean=sparsity.level,
                           nsample_size=sample.size,
@@ -42,7 +46,6 @@ gamma_est = mean(gamma)
 
 
 ## RANDOM EFFECT MODEL
-library(mgcv)
 m_model_re=gam(Mediator~X1+X2+X3+Treatment+s(Time)+s(ID,bs="re") ,data=M_data)
 Y_data$Mediator = M_data$Mediator
 y_model_re=gam(Outcome~X1+X2+X3+Mediator+Treatment+s(Time)+s(ID,bs="re") ,data=Y_data)
@@ -50,7 +53,6 @@ y_model_re=gam(Outcome~X1+X2+X3+Mediator+Treatment+s(Time)+s(ID,bs="re") ,data=Y
 
 
 ## GEE MODEL
-library(gee)
 gee_model_1=gee(Mediator~X1+X2+X3+Treatment,id=ID,data=M_data,corstr = "AR-M",Mv=1)
 gee_model_2=gee(Outcome~X1+X2+X3+Treatment+Mediator,id=ID,data=Y_data,corstr = "AR-M",Mv=1)
 gamma_gee=gee_model_2$coefficients[length(gee_model_2$coefficients)] 
@@ -64,4 +66,5 @@ save(pos_sample_size, direct_process,indirect_process,
      m_model_re,y_model_re,
      total_gee,effect_m_gee,gamma_gee,total_gee,
      total_effect,gamma,gamma_true,
-     file=paste(sparsity.level,sample.size,"_simu_result.RData",sep="_"))
+     file=paste(sparsity.level,sample.size,i,"_simu_result.RData",sep="_"))
+}
