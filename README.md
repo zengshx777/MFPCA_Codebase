@@ -13,3 +13,4 @@ A complete flow can be found via
 - ```Data_Analysis/Clean_Data.R``` does the data-preprocessing.
 
 
+Simulation related scripts can be under dir ```Simulation```.
